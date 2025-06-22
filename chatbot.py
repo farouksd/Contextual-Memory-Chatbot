@@ -10,7 +10,6 @@ class Chatbot:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         
         try:
-            # Initialize tokenizer and model
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             self.tokenizer.pad_token = self.tokenizer.eos_token
             
@@ -25,22 +24,21 @@ class Chatbot:
 
     def generate_response(self, user_input, conversation_history=None):
         try:
-            # Build the prompt with conversation context
+            
             prompt = self._build_prompt(user_input, conversation_history)
             
-            # Generate response with constrained parameters
+            # response gen
             response = self.generator(
                 prompt,
                 max_new_tokens=100,
                 num_return_sequences=1,
-                temperature=0.8,  # Balanced between creative and focused
+                temperature=0.8, 
                 top_p=0.9,
                 repetition_penalty=1.2,
                 do_sample=True,
                 pad_token_id=self.tokenizer.eos_token_id
             )
             
-            # Extract and clean the response
             full_text = response[0]["generated_text"]
             bot_response = self._extract_response(full_text, prompt)
             
@@ -58,13 +56,13 @@ class Chatbot:
 
     def _extract_response(self, full_text, prompt):
         """Extracts just the AI's response from the generated text"""
-        # Remove the prompt to get just the new response
+        
         response = full_text[len(prompt):].strip()
         
-        # Clean up any extra generated dialogue turns
+        # cleaning up any extra generated dialogue turns
         response = re.split(r'\nUser:|\nAI:', response)[0]
         
-        # Remove any incomplete sentences at the end
+        # removing any incomplete sentences at the end
         if response and response[-1] not in {'.', '!', '?'}:
             last_sentence_end = max(
                 response.rfind('.'),
