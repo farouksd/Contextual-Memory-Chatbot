@@ -17,7 +17,6 @@ class Chatbot:
         self.max_history = 5  # Keep last 5 exchanges
         
         try:
-            # Initialize tokenizer and model
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             self.tokenizer.pad_token = self.tokenizer.eos_token
             
@@ -39,16 +38,14 @@ class Chatbot:
             The chatbot's response
         """
         try:
-            # Update conversation history
+            #update conversation history
             self._update_history("User", user_input)
             
-            # Build the prompt from conversation history
             prompt = self._build_prompt()
             
-            # Generate response
+            #generate response
             input_ids = self.tokenizer.encode(prompt, return_tensors="pt").to(self.device)
             
-            # Generate with more conversational parameters
             output = self.model.generate(
                 input_ids,
                 max_new_tokens=150,
@@ -60,11 +57,10 @@ class Chatbot:
                 pad_token_id=self.tokenizer.eos_token_id
             )
             
-            # Decode and clean the response
+            #decoding and cleaning the response
             full_response = self.tokenizer.decode(output[0], skip_special_tokens=True)
             bot_response = self._extract_response(full_response, prompt)
             
-            # Update history with bot's response
             self._update_history("AI", bot_response)
             
             return bot_response
@@ -83,17 +79,16 @@ class Chatbot:
             role, content = exchange
             prompt_lines.append(f"{role}: {content}")
             
-        prompt_lines.append("AI:")  # Prompt for the AI to respond
+        prompt_lines.append("AI:") 
         return "\n".join(prompt_lines)
 
     def _extract_response(self, full_response: str, prompt: str) -> str:
         """Extracts just the new response from the generated text"""
         response = full_response[len(prompt):].strip()
         
-        # Clean up any extra turns
         response = response.split("User:")[0].split("AI:")[0].strip()
         
-        # Remove incomplete sentences
+        #removing incomplete sentences
         if response and response[-1] not in {'.', '!', '?'}:
             last_punct = max(response.rfind('.'), response.rfind('!'), response.rfind('?'))
             if last_punct >= 0:
@@ -111,7 +106,7 @@ class Chatbot:
         """
         self.conversation_history.append((role, content))
         
-        # Trim history if too long
+        #trim history if too long
         if len(self.conversation_history) > self.max_history * 2:
             self.conversation_history = self.conversation_history[-self.max_history * 2:]
 
