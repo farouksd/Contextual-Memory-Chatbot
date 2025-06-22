@@ -10,7 +10,6 @@ class ConversationMemory:
         self.memory = []
         self.embedder = SentenceTransformer('all-MiniLM-L6-v2')
         
-        # Initialize with proper empty file if doesn't exist
         if not os.path.exists(storage_file):
             self._initialize_empty_file()
         else:
@@ -34,7 +33,6 @@ class ConversationMemory:
             self.save_memory()
         except Exception as e:
             print(f"Error adding conversation: {e}")
-            # Optionally implement retry logic here
     
     def get_relevant_memories(self, query, top_k=3):
         """Get relevant memories with proper error handling"""
@@ -58,7 +56,6 @@ class ConversationMemory:
     def save_memory(self):
         """Save memory with proper error handling"""
         try:
-            # Create a safe copy for saving
             memory_to_save = []
             for entry in self.memory:
                 new_entry = entry.copy()
@@ -66,12 +63,10 @@ class ConversationMemory:
                     new_entry["embedding"] = new_entry["embedding"].tolist()
                 memory_to_save.append(new_entry)
             
-            # Write to temporary file first
             temp_file = self.storage_file + ".tmp"
             with open(temp_file, 'w') as f:
                 json.dump(memory_to_save, f, indent=2)
             
-            # Atomic file replacement
             if os.path.exists(self.storage_file):
                 os.replace(temp_file, self.storage_file)
             else:
@@ -79,7 +74,6 @@ class ConversationMemory:
                 
         except Exception as e:
             print(f"Error saving memory: {e}")
-            # Try to clean up temp file if it exists
             if os.path.exists(temp_file):
                 try:
                     os.remove(temp_file)
@@ -92,7 +86,7 @@ class ConversationMemory:
             if os.path.exists(self.storage_file):
                 with open(self.storage_file, 'r') as f:
                     content = f.read()
-                    if not content.strip():  # Handle empty file
+                    if not content.strip():  
                         self.memory = []
                     else:
                         self.memory = json.loads(content)
