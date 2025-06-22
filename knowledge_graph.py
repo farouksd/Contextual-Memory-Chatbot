@@ -2,7 +2,7 @@ import spacy
 import networkx as nx
 from pyvis.network import Network
 from collections import defaultdict
-
+#this code needs alot of extra work this isn t the final version 
 nlp = spacy.load("en_core_web_sm")
 
 class KnowledgeGraph:
@@ -14,12 +14,10 @@ class KnowledgeGraph:
         doc = nlp(text)
         entities = [(ent.text, ent.label_) for ent in doc.ents]
         
-        # Add entities to graph
         for entity, label in entities:
             self.graph.add_node(entity, label=label, size=self.entity_freq[entity] + 10)
             self.entity_freq[entity] += 1
         
-        # Add relationships
         for i in range(len(entities) - 1):
             self.graph.add_edge(entities[i][0], entities[i+1][0], weight=0.1)
     
