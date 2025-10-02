@@ -4,11 +4,9 @@ import re
 
 class Chatbot:
     def __init__(self):
-        # Model selection - using a dialogue-optimized model
-        #self.model_name = "microsoft/DialoGPT-medium"  
+        # Model selection is optional since i tried multiple and in this case i m using gpt2-xl because its light compared to more advanced models ,yet i would recommend the use of something else instead (try DialoGPT-medium still not the best ) 
         self.model_name = "gpt2-xl" 
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
             self.tokenizer.pad_token = self.tokenizer.eos_token
@@ -21,7 +19,6 @@ class Chatbot:
             )
         except Exception as e:
             raise RuntimeError(f"Failed to initialize chatbot: {str(e)}")
-
     def generate_response(self, user_input, conversation_history=None):
         try:
             
@@ -85,3 +82,4 @@ class Chatbot:
             return "I'm not entirely sure about that. What do you think?"
         else:
             return "Tell me more about that."
+
