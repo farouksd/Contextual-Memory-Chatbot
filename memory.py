@@ -14,12 +14,10 @@ class ConversationMemory:
             self._initialize_empty_file()
         else:
             self.load_memory()
-    
     def _initialize_empty_file(self):
         """Create a properly formatted empty JSON file"""
         with open(self.storage_file, 'w') as f:
             json.dump([], f)
-    
     def add_conversation(self, user_input, bot_response):
         """Add a new conversation with proper embedding handling"""
         try:
@@ -33,7 +31,6 @@ class ConversationMemory:
             self.save_memory()
         except Exception as e:
             print(f"Error adding conversation: {e}")
-    
     def get_relevant_memories(self, query, top_k=3):
         """Get relevant memories with proper error handling"""
         if not self.memory:
@@ -48,11 +45,9 @@ class ConversationMemory:
         except Exception as e:
             print(f"Error retrieving memories: {e}")
             return []
-    
     def _get_embedding(self, text):
         """Safe embedding generation"""
         return self.embedder.encode(text)
-    
     def save_memory(self):
         """Save memory with proper error handling"""
         try:
@@ -79,7 +74,6 @@ class ConversationMemory:
                     os.remove(temp_file)
                 except:
                     pass
-    
     def load_memory(self):
         """Load memory with robust error handling"""
         try:
@@ -98,9 +92,9 @@ class ConversationMemory:
             self._initialize_empty_file()
         except Exception as e:
             print(f"Error loading memory: {e}")
-            self.memory = []
-    
+            self.memory = [] 
     def clear_memory(self):
         """Completely reset the memory"""
         self.memory = []
         self._initialize_empty_file()
+
