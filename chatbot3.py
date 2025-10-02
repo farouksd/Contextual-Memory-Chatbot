@@ -14,7 +14,7 @@ class Chatbot:
         self.model_name = model_name
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.conversation_history = []
-        self.max_history = 5  # Keep last 5 exchanges
+        self.max_history = 5  # Keep last 5 exchanges (this isnt necessary i only added it for show but in reality if the front is good i wouldve removed it )
         
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
@@ -43,7 +43,7 @@ class Chatbot:
             
             prompt = self._build_prompt()
             
-            #generate response
+            #generate response (try changing the params )
             input_ids = self.tokenizer.encode(prompt, return_tensors="pt").to(self.device)
             
             output = self.model.generate(
@@ -127,3 +127,4 @@ class Chatbot:
     def reset_conversation(self):
         """Reset the conversation history"""
         self.conversation_history = []
+
